@@ -32,8 +32,8 @@ export default defineAppConfig({
       {
         pagePath: 'pages/me/index',
         text: '我的',
-        iconPath: 'assets/imgs/my.png',
-        selectedIconPath: 'assets/imgs/my-on.png'
+        iconPath: 'assets/imgs/me.png',
+        selectedIconPath: 'assets/imgs/me-on.png'
       },
     ],
   },
