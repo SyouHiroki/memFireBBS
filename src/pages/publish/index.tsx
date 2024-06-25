@@ -1,12 +1,25 @@
 import { View, Text } from '@tarojs/components'
 import { Radio, Textarea, Uploader, Button } from "@taroify/core"
 import { useState } from 'react'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { supabase } from '@/lib/supabase'
 import './index.scss'
 
 export default function Publish() {
   const [uploaderFile, setUploaderFile] = useState<Uploader.File>()
+
+  const checkAuthorization = () => {
+    const userInfo = Taro.getStorageSync('userInfo')
+    if (!userInfo) {
+      Taro.navigateTo({
+        url: '/pages/login/index'
+      })
+    }
+  }
+
+  useDidShow(() => {
+    checkAuthorization()
+  })
 
   const handleUpload = () => {
     Taro.chooseMedia({
@@ -49,7 +62,7 @@ export default function Publish() {
     <View className='publish'>
       <View className='publish-input'>
         <Textarea placeholder='请输入留言' className='publish-input-textarea' />
-        <Uploader value={uploaderFile} multiple onUpload={handleUpload} onChange={handleDel} />
+        <Uploader value={uploaderFile} multiple maxFiles={1} onUpload={handleUpload} onChange={handleDel} />
       </View>
 
       <View className='publish-dock'>

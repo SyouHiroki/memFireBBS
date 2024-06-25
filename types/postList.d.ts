@@ -6,4 +6,8 @@ export type PostType = {
   content_imgs: string
   tag_val: string
   userName: string
+  comment: {count: number}[]
+  like: {like_val: number}[]
+  page_views: {views: number}[]
+  
 }

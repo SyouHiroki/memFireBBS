@@ -1,13 +1,16 @@
 import { View, Text } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { Image } from "@taroify/core" 
+import { useState } from 'react'
 import './index.scss'
 
 export default function Me() {
-  const userInfo = Taro.getStorageSync('userInfo')
+  const [userInfo, setUserInfo] = useState(Taro.getStorageSync('userInfo') as any)
 
   const checkAuthorization = () => {
-    if (!userInfo) {
+    const newUserInfo = Taro.getStorageSync('userInfo')
+    setUserInfo(newUserInfo)
+    if (!newUserInfo) {
       Taro.navigateTo({
         url: '/pages/login/index'
       })

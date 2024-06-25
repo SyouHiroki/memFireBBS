@@ -9,12 +9,10 @@ export default function Login() {
   const handleAuthorize = () => {
     Taro.getUserProfile({
       lang: 'zh_CN',
-      desc: '用于完善会员资料',
+      desc: '确认授权',
       success: (res) => {
         Taro.setStorageSync('userInfo', res.userInfo);
-        Taro.switchTab({
-          url: '/pages/me/index'
-        })
+        Taro.navigateBack()
       },
       fail: () => {
         Taro.switchTab({
@@ -24,6 +22,11 @@ export default function Login() {
     })
   }
 
+  const cancel = () => {
+    Taro.switchTab({
+      url: '/pages/home/index'
+    })
+  }
 
   return (
     <View className='login'>
@@ -32,6 +35,7 @@ export default function Login() {
         <Info size={50} color='#2a3886' />
         <Text>提示授权</Text>
         <Button className='login-center-btn' onClick={handleAuthorize}>确定授权</Button>
+        <Button className='login-center-btn' onClick={cancel}>回到主页</Button>
       </View>
     </View>
   )

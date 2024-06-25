@@ -4,7 +4,7 @@ import { formatDate } from "@/lib/time";
 import WatchImg from '@/assets/imgs/watch.png'
 import LikeImg from '@/assets/imgs/like.png'
 import CommentImg from '@/assets/imgs/comment.png'
-import { PostType } from "../../../../types/postList";
+import { PostType } from "../../../types/postList";
 import './index.scss'
 
 type PostPropsType = {
@@ -30,9 +30,18 @@ export default function Post({ data }: PostPropsType) {
         <View className='com-post-pd-dock'>
           <Text className='com-post-pd-dock-time'>{formatDate(data.created_at)}</Text>
           <View className='com-post-pd-dock-btns'>
-            <Image mode='scaleToFill' src={WatchImg} className='com-post-pd-dock-btns-btn' />
-            <Image mode='scaleToFill' src={CommentImg} className='com-post-pd-dock-btns-btn' />
-            <Image mode='scaleToFill' src={LikeImg} className='com-post-pd-dock-btns-btn' />
+            <View className='com-post-pd-dock-btns-wrapper'>
+              <Image mode='scaleToFill' src={WatchImg} className='com-post-pd-dock-btns-wrapper-btn' />
+              {data?.page_views?.[0]?.views || 0}
+            </View>
+            <View className='com-post-pd-dock-btns-wrapper'>
+              <Image mode='scaleToFill' src={CommentImg} className='com-post-pd-dock-btns-wrapper-btn' />
+              {data?.comment?.[0]?.count || 0}
+            </View>
+            <View className='com-post-pd-dock-btns-wrapper'>
+              <Image mode='scaleToFill' src={LikeImg} className='com-post-pd-dock-btns-wrapper-btn' />
+              {data?.like?.[0]?.like_val || 0}
+            </View>
           </View>
         </View>
 

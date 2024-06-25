@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { PostType } from '../../types/postList'
 
 const usePaginatedQuery = (tableName: string, size: number) => {
-  const [data, setData] = useState<any[]>([])
+  const [data, setData] = useState<PostType[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(0)
@@ -12,10 +13,21 @@ const usePaginatedQuery = (tableName: string, size: number) => {
   const fetchData = useCallback(async (currentPage: number, isRefresh: boolean = false) => {
     setLoading(true)
     try {
-      const { data: newData, error: fetchError } = await supabase
-        .from(tableName)
-        .select('*')
-        .range(currentPage * pageSize, (currentPage + 1) * pageSize - 1)
+      const { data: newData, error: fetchError  } = await supabase
+      .from(tableName)
+      .select(`
+        id,
+        created_at,
+        userName,
+        content,
+        avatar,
+        content_imgs,
+        tag_val,
+        like(like_val),
+        page_views(views),
+        comment(count)
+      `)
+      .range(currentPage * pageSize, (currentPage + 1) * pageSize - 1)
 
       if (fetchError) {
         throw fetchError
