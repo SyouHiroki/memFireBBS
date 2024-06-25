@@ -1,0 +1,7 @@
+.home {
+  height: 100vh;
+
+  &-post {
+    height: calc(100vh - (var(--tabs-wrap-height, 88rpx * 2)));
+  }
+}

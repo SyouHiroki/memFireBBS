@@ -11,6 +11,9 @@ dependencies:
   '@taroify/core':
     specifier: 0.3.0-alpha.0
     version: 0.3.0-alpha.0(@tarojs/components@3.6.32)(@tarojs/taro@3.6.32)(react-dom@18.3.1)(react@18.3.1)
+  '@taroify/icons':
+    specifier: 0.3.0-alpha.0
+    version: 0.3.0-alpha.0(@tarojs/components@3.6.32)
   '@tarojs/components':
     specifier: 3.6.32
     version: 3.6.32(@tarojs/helper@3.6.32)(@tarojs/runtime@3.6.32)(@tarojs/shared@3.6.32)(@types/react@18.3.3)(postcss@8.4.38)(react@18.3.1)

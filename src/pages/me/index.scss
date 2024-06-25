@@ -1,0 +1,35 @@
+.me {
+  height: 100vh;
+  background-color: #eeeeee;
+
+  &-user {
+    height: 300px;
+    width: 100%;
+    background-color: #2a3886;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    flex-direction: column;
+
+    &-avatar {
+      height: 100px;
+      width: 100px;
+      border-radius: 50%;
+      border: 1px solid #ffffff;
+    }
+  }
+
+  &-dock {
+
+    &-item {
+      background-color: #ffffff;
+      width: 100%;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      font-size: 30px;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+.login {
+  height: 100vh;
+  background-color: #eeeeee;
+
+  &-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 30px;
+    gap: 30px;
+    margin-top: 100px;
+
+    &-btn {
+      background: #2a3886;
+      width: 400px;
+      height: 80px;
+      color: #ffffff;
+    }
+  }
+}

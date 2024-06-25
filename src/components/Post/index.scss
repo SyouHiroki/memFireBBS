@@ -1,0 +1,41 @@
+.com {
+  &-post {
+    border-bottom: 1px solid #eeeeee;
+
+    &-pd {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+
+      &-user {
+        font-size: 30px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      &-dock {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &-time {
+          font-size: 20px;
+          color: #a4a4a4;
+        }
+
+        &-btns {
+          display: flex;
+          align-items: center;
+          gap: 30px;
+
+          &-btn {
+            height: 38px;
+            width: 38px;
+          }
+        }
+      }
+    }
+  }
+}

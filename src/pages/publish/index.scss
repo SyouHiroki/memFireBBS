@@ -1,0 +1,40 @@
+.publish {
+  height: 100vh;
+  background-color: #eeeeee;
+
+  &-input {
+    padding: 20px;
+    background-color: #ffffff;
+
+    &-textarea {
+      height: 200px;
+    }
+  }
+
+  &-dock {
+    font-size: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+
+    &-btns {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+
+      &-radio {
+        --radio-checked-icon-background-color: #2a3886;
+        --radio-checked-icon-border-color: #2a3886;
+      }
+
+      &-btn {
+        background-color: #2a3886;
+        color: #ffffff;
+        height: 80px;
+        width: 400px;
+      }
+    }
+  }
+}
