@@ -1,8 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
+import Taro from '@tarojs/taro'
 import { PostType } from '../../types/postList'
 
-const usePaginatedQuery = (tableName: string, size: number, initialTag: string) => {
+const usePaginatedQuery = (
+  size: number, 
+  initialTag: string,
+  initialFilterType: string
+) => {
   const [data, setData] = useState<PostType[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -10,8 +15,7 @@ const usePaginatedQuery = (tableName: string, size: number, initialTag: string) 
   const [pageSize] = useState(size)
   const [hasMore, setHasMore] = useState(true)
   const [tag, setTag] = useState(initialTag)
-  
-  // 用于追踪当前请求的状态
+  const [filterType, setFilterType] = useState(initialFilterType)
   const currentRequestRef = useRef(0)
 
   const fetchData = useCallback(async (currentPage: number, isRefresh: boolean = false) => {
@@ -19,7 +23,7 @@ const usePaginatedQuery = (tableName: string, size: number, initialTag: string) 
     try {
       const requestId = ++currentRequestRef.current
       let query = supabase
-        .from(tableName)
+        .from('post_list')
         .select(`
           id,
           created_at,
@@ -37,6 +41,18 @@ const usePaginatedQuery = (tableName: string, size: number, initialTag: string) 
       // 如果tag不为'全部'，添加筛选条件
       if (tag !== '全部') {
         query = query.eq('tag_val', tag)
+      }
+
+      // 处理第二层筛选和排序
+      if (filterType === '最新') {
+        query = query.order('created_at', { ascending: false })
+      } else if (filterType === '热门') {
+        query = query.order('views', { foreignTable: 'page_views', ascending: false })
+      } else if (filterType === '我的') {
+        const newUserInfo = Taro.getStorageSync('userInfo')
+        if (newUserInfo && newUserInfo.nickName) {
+          query = query.eq('userName', newUserInfo.nickName)
+        }
       }
 
       const { data: newData, error: fetchError } = await query
@@ -73,14 +89,14 @@ const usePaginatedQuery = (tableName: string, size: number, initialTag: string) 
     } finally {
       setLoading(false)
     }
-  }, [tableName, pageSize, tag])
+  }, [pageSize, tag, filterType])
 
-  // 在tag变化时重置数据和页码，并重新获取数据
+  // 在tag或filterType变化时重置数据和页码，并重新获取数据
   useEffect(() => {
     setData([])
     setPage(0)
     fetchData(0, true)
-  }, [tag, fetchData])
+  }, [tag, filterType, fetchData])
 
   useEffect(() => {
     fetchData(page)
@@ -101,10 +117,13 @@ const usePaginatedQuery = (tableName: string, size: number, initialTag: string) 
     setTag(newTag)
   }
 
-  return { data, loading, error, loadMore, hasMore, refresh, filter }
+  const updateFilterType = (newFilterType: string) => {
+    setFilterType(newFilterType)
+  }
+
+  return { data, loading, error, loadMore, hasMore, refresh, filter, updateFilterType }
 }
 
 export default usePaginatedQuery
-
 
 

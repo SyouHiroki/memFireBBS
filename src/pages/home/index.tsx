@@ -8,7 +8,7 @@ import "./index.scss"
 export default function Home() {
   const [currentTab, setCurrentTab] = useState('全部')
   const [currentSort, setCurrentSort] = useState('默认')
-  const {data, loading, hasMore, refresh, loadMore, filter} = usePaginatedQuery('post_list', 10, '生活')
+  const {data, loading, hasMore, refresh, loadMore, filter, updateFilterType} = usePaginatedQuery(10, currentTab, currentSort)
 
   const tabList1 = useRef([
     {id: 0, title: '全部'},
@@ -28,6 +28,11 @@ export default function Home() {
   const handleSwitchTab1 = (tabName: string) => {
     setCurrentTab(tabName)
     filter(tabName)
+  }
+
+  const handleSwitchTab2 = (tabName: string) => {
+    setCurrentSort(tabName)
+    updateFilterType(tabName)
   }
 
   return (
@@ -51,7 +56,7 @@ export default function Home() {
                 '—tabs-active-color': '#2a3886'
                 }}
               >
-                <Tabs value={currentSort} onChange={setCurrentSort} >
+                <Tabs value={currentSort} onChange={handleSwitchTab2} >
                   {tabList2.current.map(t2Item => (
                     <Tabs.TabPane title={t2Item.title} value={t2Item.title} key={t2Item.id} >
                       <PullRefresh loading={loading} onRefresh={refresh}>
