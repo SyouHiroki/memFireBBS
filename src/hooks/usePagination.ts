@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { PostType } from '../../types/postList'
 
@@ -10,10 +10,14 @@ const usePaginatedQuery = (tableName: string, size: number, initialTag: string) 
   const [pageSize] = useState(size)
   const [hasMore, setHasMore] = useState(true)
   const [tag, setTag] = useState(initialTag)
+  
+  // 用于追踪当前请求的状态
+  const currentRequestRef = useRef(0)
 
   const fetchData = useCallback(async (currentPage: number, isRefresh: boolean = false) => {
     setLoading(true)
     try {
+      const requestId = ++currentRequestRef.current
       let query = supabase
         .from(tableName)
         .select(`
@@ -36,6 +40,11 @@ const usePaginatedQuery = (tableName: string, size: number, initialTag: string) 
       }
 
       const { data: newData, error: fetchError } = await query
+
+      if (requestId !== currentRequestRef.current) {
+        // 如果请求不是最新的，则忽略结果
+        return
+      }
 
       if (fetchError) {
         throw fetchError

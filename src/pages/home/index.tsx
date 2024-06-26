@@ -28,7 +28,6 @@ export default function Home() {
   const handleSwitchTab1 = (tabName: string) => {
     setCurrentTab(tabName)
     filter(tabName)
-    console.log('data',data)
   }
 
   return (
