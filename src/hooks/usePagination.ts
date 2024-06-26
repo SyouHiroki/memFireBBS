@@ -2,41 +2,56 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { PostType } from '../../types/postList'
 
-const usePaginatedQuery = (tableName: string, size: number) => {
+const usePaginatedQuery = (tableName: string, size: number, initialTag: string) => {
   const [data, setData] = useState<PostType[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(0)
   const [pageSize] = useState(size)
   const [hasMore, setHasMore] = useState(true)
+  const [tag, setTag] = useState(initialTag)
 
   const fetchData = useCallback(async (currentPage: number, isRefresh: boolean = false) => {
     setLoading(true)
     try {
-      const { data: newData, error: fetchError  } = await supabase
-      .from(tableName)
-      .select(`
-        id,
-        created_at,
-        userName,
-        content,
-        avatar,
-        content_imgs,
-        tag_val,
-        like(like_val),
-        page_views(views),
-        comment(count)
-      `)
-      .range(currentPage * pageSize, (currentPage + 1) * pageSize - 1)
+      let query = supabase
+        .from(tableName)
+        .select(`
+          id,
+          created_at,
+          userName,
+          content,
+          avatar,
+          content_imgs,
+          tag_val,
+          like (like_val),
+          page_views (views),
+          comment (count)
+        `)
+        .range(currentPage * pageSize, (currentPage + 1) * pageSize - 1)
+
+      // 如果tag不为'全部'，添加筛选条件
+      if (tag !== '全部') {
+        query = query.eq('tag_val', tag)
+      }
+
+      const { data: newData, error: fetchError } = await query
 
       if (fetchError) {
         throw fetchError
       }
 
+      const formattedData = newData?.map((post: any) => ({
+        ...post,
+        like: post.like || [],
+        page_views: post.page_views || [],
+        comment: post.comment || []
+      })) ?? []
+
       if (isRefresh) {
-        setData(newData ?? [])
+        setData(formattedData)
       } else {
-        setData((prevData) => [...prevData, ...(newData ?? [])])
+        setData((prevData) => [...prevData, ...formattedData])
       }
 
       if (newData?.length < pageSize) {
@@ -49,7 +64,14 @@ const usePaginatedQuery = (tableName: string, size: number) => {
     } finally {
       setLoading(false)
     }
-  }, [tableName, pageSize])
+  }, [tableName, pageSize, tag])
+
+  // 在tag变化时重置数据和页码，并重新获取数据
+  useEffect(() => {
+    setData([])
+    setPage(0)
+    fetchData(0, true)
+  }, [tag, fetchData])
 
   useEffect(() => {
     fetchData(page)
@@ -66,7 +88,14 @@ const usePaginatedQuery = (tableName: string, size: number) => {
     fetchData(0, true)
   }
 
-  return { data, loading, error, loadMore, hasMore, refresh }
+  const filter = (newTag: string) => {
+    setTag(newTag)
+  }
+
+  return { data, loading, error, loadMore, hasMore, refresh, filter }
 }
 
 export default usePaginatedQuery
+
+
+

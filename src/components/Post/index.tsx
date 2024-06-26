@@ -1,5 +1,5 @@
 import { View, Text } from "@tarojs/components";
-import { Avatar, TextEllipsis, Image } from "@taroify/core"
+import { Image } from "@taroify/core"
 import { formatDate } from "@/lib/time";
 import WatchImg from '@/assets/imgs/watch.png'
 import LikeImg from '@/assets/imgs/like.png'
@@ -17,15 +17,24 @@ export default function Post({ data }: PostPropsType) {
     <View className='com-post' >
       <View className='com-post-pd'>
         <View className='com-post-pd-user'>
-          <Avatar size='small' src={data.avatar}>{data.avatar ? '' : data.userName[0]}</Avatar>
-          <Text>{data.userName}</Text>
+          {data?.avatar ? <Image className='com-post-pd-user-avatar' src={data?.avatar}  /> : <View className='com-post-pd-user-avatar-void'>{data?.userName[0]}</View>}
+          <Text>{data?.userName}</Text>
         </View>
 
-        <TextEllipsis 
-          content={data.content}
-          expandText='展开'
-          collapseText='收起'
-        />
+        <Text className='com-post-pd-content'>{data?.content.length > 80 ? data?.content.slice(0, 80).trim() + '...' : data?.content}</Text>
+
+        <View>
+          {(() => {
+            if (data?.content_imgs) {
+              const imgs = JSON.parse(data.content_imgs)
+              if (typeof imgs === 'object' && Array.isArray(imgs)) {
+                return imgs.map((item, index) => (
+                  <Image key={index} src={item} className='com-post-pd-img' />
+                ))
+              }
+            }
+          })()}
+        </View>
 
         <View className='com-post-pd-dock'>
           <Text className='com-post-pd-dock-time'>{formatDate(data.created_at)}</Text>

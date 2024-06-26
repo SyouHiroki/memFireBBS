@@ -13,6 +13,32 @@
         display: flex;
         align-items: center;
         gap: 20px;
+
+        &-avatar {
+          height: 50px;
+          width: 50px;
+          border-radius: 50%;
+
+          &-void {
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            background-color: #a4a4a4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #5e5c5c;
+          }
+        }
+      }
+
+      &-content {
+        font-size: 30px;
+      }
+
+      &-img {
+        height: 120px;
+        width: 120px;
       }
 
       &-dock {

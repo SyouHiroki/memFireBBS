@@ -4,13 +4,18 @@ import { useState } from 'react'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { supabase } from '@/lib/supabase'
 import './index.scss'
+import { PostType } from '../../../types/postList'
 
 export default function Publish() {
+  const [userInfo, setUserInfo] = useState(Taro.getStorageSync('userInfo') as any)
   const [uploaderFile, setUploaderFile] = useState<Uploader.File>()
+  const [text, setText] = useState<string>('')
+  const [tag, setTag] = useState<string>('生活')
 
   const checkAuthorization = () => {
-    const userInfo = Taro.getStorageSync('userInfo')
-    if (!userInfo) {
+    const newUserInfo = Taro.getStorageSync('userInfo')
+    setUserInfo(newUserInfo)
+    if (!newUserInfo) {
       Taro.navigateTo({
         url: '/pages/login/index'
       })
@@ -58,10 +63,31 @@ export default function Publish() {
     setUploaderFile({})
   }
 
+  const handlePublish = async () => {
+    const { error } = await supabase
+    .from('post_list')
+    .insert([
+      { userName: userInfo.nickName, content: text, avatar: userInfo.avatarUrl, content_imgs: `["${uploaderFile?.url}"]`, tag_val: tag },
+    ] as PostType[])
+    .select()
+
+    if (error) {
+      throw error
+    } else {
+      Taro.showToast({title: '发布成功！', icon: 'none'}).then(() => {
+        setTimeout(() => {
+          Taro.switchTab({
+            url: '/pages/home/index'
+          })
+        }, 1000)
+      })
+    }
+  }
+
   return (
     <View className='publish'>
       <View className='publish-input'>
-        <Textarea placeholder='请输入留言' className='publish-input-textarea' />
+        <Textarea placeholder='请输入留言' className='publish-input-textarea' value={text} onChange={(e)=> setText(e.detail.value)} />
         <Uploader value={uploaderFile} multiple maxFiles={1} onUpload={handleUpload} onChange={handleDel} />
       </View>
 
@@ -69,14 +95,14 @@ export default function Publish() {
         <Text>选择文章类型</Text>
         
         <View className='publish-dock-btns'>
-          <Radio.Group defaultValue='1' direction='horizontal' className='publish-dock-btns-radio' >
-            <Radio name='1'>生活</Radio>
-            <Radio name='2'>学习</Radio>
-            <Radio name='3'>问答</Radio>
-            <Radio name='4'>情感</Radio>
+          <Radio.Group defaultValue='生活' direction='horizontal' className='publish-dock-btns-radio' value={tag} onChange={setTag} >
+            <Radio name='生活'>生活</Radio>
+            <Radio name='学习'>学习</Radio>
+            <Radio name='问答'>问答</Radio>
+            <Radio name='情感'>情感</Radio>
           </Radio.Group>
 
-          <Button className='publish-dock-btns-btn'>立即发布</Button>
+          <Button className='publish-dock-btns-btn' onClick={handlePublish}>立即发布</Button>
         </View>
       </View>
     </View>
