@@ -8,7 +8,7 @@ import { PostType } from '../../../types/postList'
 
 export default function Publish() {
   const [userInfo, setUserInfo] = useState(Taro.getStorageSync('userInfo') as any)
-  const [uploaderFile, setUploaderFile] = useState<Uploader.File>()
+  const [uploaderFile, setUploaderFile] = useState<Uploader.File>({})
   const [text, setText] = useState<string>('')
   const [tag, setTag] = useState<string>('生活')
 
@@ -64,11 +64,19 @@ export default function Publish() {
   }
 
   const handlePublish = async () => {
+    if (text === '') {
+      Taro.showToast({title: '请输入内容！', icon: 'none'})
+      return
+    }
+
+    const article = { userName: userInfo.nickName, content: text, avatar: userInfo.avatarUrl, tag_val: tag } as PostType
+    if (Reflect.ownKeys(uploaderFile).length !== 0) {
+      article.content_imgs = `["${uploaderFile?.url}"]`
+    }
+
     const { error } = await supabase
     .from('post_list')
-    .insert([
-      { userName: userInfo.nickName, content: text, avatar: userInfo.avatarUrl, content_imgs: `["${uploaderFile?.url}"]`, tag_val: tag },
-    ] as PostType[])
+    .insert([article])
     .select()
 
     if (error) {
@@ -87,7 +95,7 @@ export default function Publish() {
   return (
     <View className='publish'>
       <View className='publish-input'>
-        <Textarea placeholder='请输入留言' className='publish-input-textarea' value={text} onChange={(e)=> setText(e.detail.value)} />
+        <Textarea placeholder='请输入内容' className='publish-input-textarea' value={text} onChange={(e)=> setText(e.detail.value)} />
         <Uploader value={uploaderFile} multiple maxFiles={1} onUpload={handleUpload} onChange={handleDel} />
       </View>
 

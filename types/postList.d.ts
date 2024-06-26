@@ -3,7 +3,7 @@ export type PostType = {
   created_at: string
   avatar: string
   content: string
-  content_imgs: string
+  content_imgs?: string
   tag_val: string
   userName: string
   comment?: {count: number}[]
