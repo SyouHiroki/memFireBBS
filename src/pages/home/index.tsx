@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import { View } from "@tarojs/components"
 import { Tabs, ConfigProvider, List, PullRefresh } from "@taroify/core"
-// import usePaginatedQuery from "@/hooks/usePagination"
+import usePaginatedQuery from "@/hooks/usePagination"
 import Post from "@/components/Post"
 import { PostType } from "../../../types/postList"
 import "./index.scss"
@@ -9,7 +9,7 @@ import "./index.scss"
 export default function Home() {
   const [currentTab, setCurrentTab] = useState(0)
   const [currentSort, setCurrentSort] = useState(0)
-  // const {data, loading, hasMore, refresh, loadMore} = usePaginatedQuery('post_list', 10)
+  const {data, loading, hasMore, refresh, loadMore} = usePaginatedQuery('post_list', 10)
 
   const tabList1 = useRef([
     {id: 0, title: '全部'},
@@ -26,20 +26,20 @@ export default function Home() {
     {id: 3, title: '我的'}
   ])
 
-  const testArticle = useRef<PostType[]>([
-    {id: 0, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 1, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 2, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 3, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 4, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 5, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 6, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 7, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 8, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 9, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 10, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-    {id: 10, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
-  ])
+  // const testArticle = useRef<PostType[]>([
+  //   {id: 0, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 1, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 2, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 3, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 4, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 5, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 6, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 7, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 8, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 9, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 10, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  //   {id: 10, created_at: "2024-06-24T16:30:26.137545+00:00", avatar: '', content: '你好', content_imgs: '', tag_val: '生活', userName: 'ake:shime', comment: [{count: 12}], like: [{like_val: 13}], page_views: [{views: 23}]},
+  // ])
 
   return (
     <View className='home'>
@@ -65,20 +65,20 @@ export default function Home() {
                 <Tabs value={currentSort} onChange={setCurrentSort} >
                   {tabList2.current.map(t2Item => (
                     <Tabs.TabPane title={t2Item.title} value={t2Item.id} key={t2Item.id} >
-                      {/* <PullRefresh loading={loading} onRefresh={refresh}>
+                      <PullRefresh loading={loading} onRefresh={refresh}>
                         <List className='home-post' fixedHeight loading={loading} hasMore={hasMore} onLoad={loadMore}>
                           {
                             data.map(dItem => <Post key={dItem.id} data={dItem} />)
                           }
                         </List>
-                      </PullRefresh> */}
-                      <PullRefresh >
+                      </PullRefresh>
+                      {/* <PullRefresh >
                         <List className='home-post' fixedHeight >
                           {
                             testArticle.current.map(dItem => <Post key={dItem.id} data={dItem} />)
                           }
                         </List>
-                      </PullRefresh>
+                      </PullRefresh> */}
                     </Tabs.TabPane>
                   ))}
                 </Tabs>
