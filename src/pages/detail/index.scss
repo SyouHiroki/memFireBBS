@@ -1,12 +1,22 @@
+$--tabbarHeight: 100px;
+
 .detail {
-  height: 100vh;
+  padding-bottom: calc($--tabbarHeight + env(safe-area-inset-bottom));
   background-color: #eeeeee;
+
+  &-time {
+    font-size: 22px;
+    color: #a4a4a4;
+  }
 
   &-pd {
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 30px;
+    height: calc(100vh - $--tabbarHeight - env(safe-area-inset-bottom));
+    box-sizing: border-box;
+    overflow-y: scroll;
 
     &-user {
       display: flex;
@@ -17,11 +27,6 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-  
-        &-time {
-          font-size: 22px;
-          color: #a4a4a4;
-        }
       }
   
       &-avatar {
@@ -44,6 +49,7 @@
 
     &-content {
       font-size: 35px;
+      margin-bottom: 60px;
     }
 
     &-img {
@@ -68,8 +74,15 @@
       gap: 30px;
 
       &-wrapper {
+        display: flex;
+        flex-direction: column;
+        border-top: 1px solid #cacaca;
 
         &-content {
+          margin-bottom: 40px;
+        }
+
+        &-user {
           color: #2a3886;
           display: flex;
           align-items: center;
@@ -84,6 +97,22 @@
             transform: translateY(5px);
             margin-right: 5px;
           }
+
+          &-reply {
+            margin-left: 30px;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid #cacaca;
+
+            &-content {
+              margin-bottom: 40px;
+            }
+
+            &-responder {
+              color: #2a3886;
+            }
+          }
         }
       }
     }
@@ -94,7 +123,8 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 100px;
+    height: $--tabbarHeight;
+    background-color: #ffffff;
     margin-bottom: env(safe-area-inset-bottom);
 
     &-item {

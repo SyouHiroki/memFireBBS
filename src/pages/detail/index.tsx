@@ -16,10 +16,12 @@ export default function Detail() {
   const { id } = Taro.getCurrentInstance().router!.params
   const [userInfo, setUserInfo] = useState(Taro.getStorageSync('userInfo') as any)
   const [showInput, setShowInput] = useState(false)
-  const [commentText, setCommentText] = useState('')
+  const [inputText, setInputText] = useState('')
   const [detail, setDetail] = useState<PostDetailType[]>([])
+  const [mode, setMode] = useState<'评论' | '回复'>('评论')
+  const [commentId, setCommentId] = useState(0)
 
-  const getDetail = async (post_id: string) => {
+  const getDetail = async () => {
     const { data, error } = await supabase
       .from('post_list')
       .select(`
@@ -32,9 +34,12 @@ export default function Detail() {
         tag_val,
         like (like_val, likers),
         page_views (views),
-        comment (id, created_at, commentator, responder, comment_content, reply_content, post_id)
+        comment (
+          id, created_at, commentator, responder, comment_content, reply_content, post_id,
+          reply (id, created_at, commentator, responder, reply_content, comment_id)
+        )
       `)
-      .eq('id', post_id)
+      .eq('id', id)
 
       if (error) {
         throw error
@@ -43,11 +48,11 @@ export default function Detail() {
       setDetail(data)
   }
 
-  const updateViews = async (post_id: string) => {
+  const updateViews = async () => {
     let { data: selectData, error: selectErr } = await supabase
     .from('page_views')
     .select('views')
-    .eq('post_id', post_id)
+    .eq('post_id', id)
 
     if (selectErr) {
       throw selectErr
@@ -56,7 +61,7 @@ export default function Detail() {
     const { error: updateErr } = await supabase
     .from('page_views')
     .update({ views: Number(selectData?.[0].views) + 1 })
-    .eq('post_id', post_id)
+    .eq('post_id', id)
     .select()
 
     if (updateErr) {
@@ -64,11 +69,11 @@ export default function Detail() {
     }
   }
 
-  const handleLike = async (post_id: string) => {
-    let { data: selectData, error: selectErr } = await supabase
+  const handleLike = async () => {
+    const { data: selectData, error: selectErr } = await supabase
     .from('like')
     .select('like_val, likers')
-    .eq('post_id', post_id)
+    .eq('post_id', id)
 
     if (selectErr) {
       throw selectErr
@@ -78,21 +83,21 @@ export default function Detail() {
     const { error: updateErr } = await supabase
     .from('like')
     .update(newData)
-    .eq('post_id', post_id)
+    .eq('post_id', id)
     .select()
 
     if (updateErr) {
       throw updateErr
     } 
 
-    getDetail(id as string)
+    getDetail()
   }
 
-  const handleCancleLike = async (post_id: string) => {
-    let { data: selectData, error: selectErr } = await supabase
+  const handleCancleLike = async () => {
+    const { data: selectData, error: selectErr } = await supabase
     .from('like')
     .select('like_val, likers')
-    .eq('post_id', post_id)
+    .eq('post_id', id)
 
     if (selectErr) {
       throw selectErr
@@ -109,23 +114,18 @@ export default function Detail() {
     const { error: updateErr } = await supabase
     .from('like')
     .update(newData)
-    .eq('post_id', post_id)
+    .eq('post_id', id)
     .select()
 
     if (updateErr) {
       throw updateErr
     }
 
-    getDetail(id as string)
+    getDetail()
   }
 
   const handleGoToHome = () => {
     Taro.navigateBack()
-  }
-
-  const handleCloseInput = () => {
-    setShowInput(false)
-    setCommentText('')
   }
 
   const handleComment = async () => {
@@ -133,7 +133,7 @@ export default function Detail() {
     .from('comment')
     .insert([{
       commentator: userInfo.nickName,
-      comment_content: commentText,
+      comment_content: inputText,
       post_id: id
     }])
     .select()
@@ -143,9 +143,53 @@ export default function Detail() {
     } else {
       Taro.showToast({title: '评论成功！', icon: 'none'}).then(() => {
         handleCloseInput()
-        getDetail(id as string)
+        getDetail()
       })
     }
+  }
+
+  const handleReply = async () => {
+    const { error } = await supabase
+    .from('reply')
+    .insert([{
+      responder: userInfo.nickName,
+      reply_content: inputText,
+      post_id: id,
+      comment_id: commentId
+    }])
+    .select()
+
+    if (error) {
+      throw error
+    } else {
+      Taro.showToast({title: '回复成功！', icon: 'none'}).then(() => {
+        handleCloseInput()
+        getDetail()
+      })
+    }
+  }
+
+  const handleSend = () => {
+    if (mode === '回复') {
+      handleReply()
+    } else if (mode === '评论') {
+      handleComment()
+    } else {
+      console.error('暂不支持该模式！')
+    }
+  }
+
+  const handleOpenInput = (inputMode: '评论' | '回复', comment_id?: number) => {
+    if (comment_id) {
+      setCommentId(comment_id)
+    }
+    setMode(inputMode)
+    setShowInput(true)
+  }
+
+  const handleCloseInput = () => {
+    setShowInput(false)
+    setInputText('')
   }
 
   const checkAuthorization = () => {
@@ -163,8 +207,8 @@ export default function Detail() {
 
   useDidShow(async () => {
     if (checkAuthorization()) {
-      await updateViews(id as string)
-      getDetail(id as string)
+      await updateViews()
+      getDetail()
     }
   })
 
@@ -175,7 +219,7 @@ export default function Detail() {
           {detail?.[0]?.avatar ? <Image src={detail?.[0]?.avatar} className='detail-pd-user-avatar' /> : <View className='detail-pd-user-avatar-void'>{detail?.[0]?.userName[0]}</View>}
           <View className='detail-pd-user-info'>
             <Text>{detail?.[0]?.userName}</Text>
-            <Text className='detail-pd-user-info-time'>{formatDate(detail?.[0]?.created_at)}</Text>
+            <Text className='detail-time'>{formatDate(detail?.[0]?.created_at)}</Text>
           </View>
         </View>
 
@@ -194,15 +238,24 @@ export default function Detail() {
         </Text>
 
         {detail?.[0]?.comment && <View className='detail-pd-comment'>
-          {detail?.[0]?.comment.map(item => (
-            <View key={item.id} className='detail-pd-comment-wrapper'>
-              <View className='detail-pd-comment-wrapper-content'>
-                <Text className='detail-pd-comment-wrapper-content-commentator'>{item.commentator}</Text>
-                <Image mode='scaleToFill' src={CommentImg} className='detail-pd-comment-wrapper-content-icon' />
-                <Text>回复</Text>
+          {detail?.[0]?.comment.map(cItem => (
+            <View key={cItem.id} className='detail-pd-comment-wrapper'>
+              <View className='detail-pd-comment-wrapper-user'>
+                <Text className='detail-pd-comment-wrapper-user-commentator'>{cItem.commentator}</Text>
+                <Image mode='scaleToFill' src={CommentImg} className='detail-pd-comment-wrapper-user-icon' />
+                <Text onClick={() => handleOpenInput('回复', cItem.id)}>回复</Text>
               </View>
 
-              <Text>{item.comment_content}</Text>
+              <Text className='detail-pd-comment-wrapper-content'>{cItem.comment_content}</Text>
+              <Text className='detail-time'>{formatDate(cItem.created_at)}</Text>
+
+              {cItem?.reply && cItem?.reply?.map(rItem => (
+                <View className='detail-pd-comment-wrapper-user-reply' key={rItem.id}>
+                  <Text className='detail-pd-comment-wrapper-user-reply-responder'>{rItem.responder}</Text>
+                  <Text className='detail-pd-comment-wrapper-user-reply-content'>{rItem.reply_content}</Text>
+                  <Text className='detail-time'>{formatDate(rItem.created_at)}</Text>
+                </View>
+              ))}
             </View>
           ))}
         </View>}
@@ -215,24 +268,24 @@ export default function Detail() {
             <Text>首页</Text>
           </View>
 
-          <View className='detail-tabbar-item' onClick={() => setShowInput(true)}>
+          <View className='detail-tabbar-item' onClick={() => handleOpenInput('评论')}>
             <Image src={CommentImg} className='detail-tabbar-item-icon' />
             <Text>评论</Text>
           </View>
 
-          <View className='detail-tabbar-item' onClick={() => stringArrayHas(detail?.[0]?.like?.[0].likers as string, userInfo.nickName) ? handleCancleLike(id as string) : handleLike(id as string)}>
+          <View className='detail-tabbar-item' onClick={() => stringArrayHas(detail?.[0]?.like?.[0].likers as string, userInfo.nickName) ? handleCancleLike() : handleLike()}>
             <Image src={stringArrayHas(detail?.[0]?.like?.[0].likers as string, userInfo.nickName) ? LikeOnImg : LikeImg} className='detail-tabbar-item-icon' />
             <Text>点赞</Text>
           </View>
         </View>
 
         {showInput && <View className='detail-input'>
-          <Text className='detail-input-desc'>评论</Text>
-          <Textarea placeholder='请输入内容' className='detail-input-textarea' value={commentText} onChange={(e)=> setCommentText(e.detail.value)} />
+          <Text className='detail-input-desc'>{mode}</Text>
+          <Textarea placeholder='请输入内容' className='detail-input-textarea' value={inputText} onChange={(e)=> setInputText(e.detail.value)} />
           
           <View className='detail-input-btns'>
             <Button className='detail-input-btns-btn' onClick={handleCloseInput}>取消</Button>
-            <Button className='detail-input-btns-btn' onClick={handleComment}>发送</Button>
+            <Button className='detail-input-btns-btn' onClick={handleSend}>发送</Button>
           </View>
         </View>}
       </FixedView>

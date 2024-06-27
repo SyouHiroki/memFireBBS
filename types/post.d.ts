@@ -32,5 +32,13 @@ export type PostDetailType = {
     comment_content: string
     reply_content: string
     post_id: number,
+    reply: {
+      comment_id: number
+      commentator: string
+      created_at: string
+      id: number
+      reply_content: string
+      responder: string
+    }[]
   }[]
 }
