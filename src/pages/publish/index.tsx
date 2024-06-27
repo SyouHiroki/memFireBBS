@@ -17,8 +17,8 @@ export default function Publish() {
     const newUserInfo = Taro.getStorageSync('userInfo')
     setUserInfo(newUserInfo)
     if (!newUserInfo) {
-      Taro.navigateTo({
-        url: '/pages/login/index'
+      Taro.switchTab({
+        url: '/pages/me/index'
       })
     }
   }

@@ -32,4 +32,76 @@
       font-size: 30px;
     }
   }
+
+  &-popup {
+
+    &-container {
+      box-sizing: border-box;
+      padding: 40px;
+      height: 100%;
+      width: 100%;
+      position: relative;
+
+      &-wrapper { 
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 40px);
+
+        &-input {
+          display: flex;
+          align-items: center;
+          color: #a4a4a4;
+          font-size: 30px;
+          width: max-content;
+          margin-bottom: 40px;
+          
+          &-nickname {
+            border-bottom: 1px solid #eeeeee;
+            color: #000000;
+            text-align: center;
+            width: 300px;
+          }
+
+          &-checkbox {
+            margin-right: 20px;
+            --checkbox-checked-icon-border-color: #2a3886;
+            --checkbox-checked-icon-background-color: #2a3886;
+          }
+
+          &-btn {
+            border: none;
+            background-color: transparent;
+            height: 90px;
+            width: 90px;
+            border-radius: 50%;
+            transform: translateX(100px);
+          }
+        }
+
+        &-avatar {
+          height: 100px;
+          width: 100px;
+          border-radius: 50%;
+          border: 1px solid #ffffff;
+        }
+
+        &-confirm {
+          background-color: #2a3886;
+          color: #ffffff;
+          width: 60vw;
+          transform: translate(-50%, 0);
+          position: absolute;
+          left: 50%;
+        }
+      }
+
+      &-progress {
+        &:not(.taroify-progress--inactive) {
+          .taroify-progress__portion {
+            background: #2a3886;
+          }
+        }
+      }
+    }
+  }
 }
