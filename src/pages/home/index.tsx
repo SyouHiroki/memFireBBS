@@ -3,6 +3,7 @@ import { View } from "@tarojs/components"
 import { Tabs, ConfigProvider, List, PullRefresh } from "@taroify/core"
 import usePaginatedQuery from "@/hooks/usePagination"
 import Post from "@/components/Post"
+import Taro from "@tarojs/taro"
 import "./index.scss"
 
 export default function Home() {
@@ -35,6 +36,12 @@ export default function Home() {
     updateFilterType(tabName)
   }
 
+  const handleGoToDetail = (id: number) => {
+    Taro.navigateTo({
+      url: `/pages/detail/index?id=${id}`
+    })
+  }
+
   return (
     <View className='home'>
       <ConfigProvider theme={{
@@ -62,7 +69,7 @@ export default function Home() {
                       <PullRefresh loading={loading} onRefresh={refresh}>
                         <List className='home-post' fixedHeight loading={loading} hasMore={hasMore} onLoad={loadMore}>
                           {
-                            data.map(dItem => <Post key={dItem.id} data={dItem} />)
+                            data.map(dItem => <View key={dItem.id} onClick={() => handleGoToDetail(dItem.id)}><Post data={dItem} /></View>)
                           }
                         </List>
                       </PullRefresh>

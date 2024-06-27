@@ -1,0 +1,148 @@
+.detail {
+  height: 100vh;
+  background-color: #eeeeee;
+
+  &-pd {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    &-user {
+      display: flex;
+      gap: 20px;
+  
+      &-info {
+        font-size: 35px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+  
+        &-time {
+          font-size: 22px;
+          color: #a4a4a4;
+        }
+      }
+  
+      &-avatar {
+        height: 80px;
+        width: 80px;
+        border-radius: 50%;
+
+        &-void {
+          height: 80px;
+          width: 80px;
+          border-radius: 50%;
+          background-color: #a4a4a4;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #5e5c5c;
+        }
+      }
+    }
+
+    &-content {
+      font-size: 35px;
+    }
+
+    &-img {
+      height: 160px;
+      width: 160px;
+    }
+
+    &-meta {
+      font-size: 30px;
+
+      &-tag {
+        color: #2a3886;
+        font-weight: 700;
+        margin-right: 20px;
+      }
+    }
+
+    &-comment {
+      font-size: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+
+      &-wrapper {
+
+        &-content {
+          color: #2a3886;
+          display: flex;
+          align-items: center;
+
+          &-commentator {
+            margin-right: 30px;
+          }
+  
+          &-icon {
+            height: 30px;
+            width: 30px;
+            transform: translateY(5px);
+            margin-right: 5px;
+          }
+        }
+      }
+    }
+  }
+
+  &-tabbar {
+    border-top: 1px solid #cacaca;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100px;
+    margin-bottom: env(safe-area-inset-bottom);
+
+    &-item {
+      font-size: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      &-icon {
+        height: 50px;
+        width: 50px;
+      }
+    }
+  }
+
+  &-input {
+    position: absolute;
+    bottom: env(safe-area-inset-bottom);
+    width: 100%;
+    background-color: #eeeeee;
+    padding: 20px;
+    border-top: 1px solid #cacaca;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+
+    &-desc {
+      font-size: 26px;
+    }
+
+    &-textarea {
+      background-color: #ffffff;
+      height: 200px;
+    }
+
+    &-btns {
+      display: flex;
+      justify-content: flex-end;
+      gap: 30px;
+
+      &-btn {
+        height: 70px;
+        width: 160px;
+        background-color: #2a3886;
+        color: #ffffff;
+      }
+    }
+  }
+}

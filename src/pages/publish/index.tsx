@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { supabase } from '@/lib/supabase'
 import './index.scss'
-import { PostType } from '../../../types/postList'
+import { PostListType } from '../../../types/post'
 
 export default function Publish() {
   const [userInfo, setUserInfo] = useState(Taro.getStorageSync('userInfo') as any)
@@ -69,7 +69,7 @@ export default function Publish() {
       return
     }
 
-    const article = { userName: userInfo.nickName, content: text, avatar: userInfo.avatarUrl, tag_val: tag } as PostType
+    const article = { userName: userInfo.nickName, content: text, avatar: userInfo.avatarUrl, tag_val: tag } as PostListType
     if (Reflect.ownKeys(uploaderFile).length !== 0) {
       article.content_imgs = `["${uploaderFile?.url}"]`
     }

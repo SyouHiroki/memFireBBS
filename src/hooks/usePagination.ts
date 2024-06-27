@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import Taro from '@tarojs/taro'
-import { PostType } from '../../types/postList'
+import { PostListType } from '../../types/post'
 
 const usePaginatedQuery = (
   size: number, 
   initialTag: string,
   initialFilterType: string
 ) => {
-  const [data, setData] = useState<PostType[]>([])
+  const [data, setData] = useState<PostListType[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(0)
