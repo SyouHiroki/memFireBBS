@@ -22,6 +22,12 @@ export default function Publish() {
     }
   }
 
+  const reset = () => {
+    setUploaderFile({})
+    setText('')
+    setTag('生活')
+  }
+
   useDidShow(() => {
     checkAuthorization()
   })
@@ -70,7 +76,7 @@ export default function Publish() {
     }
 
     const article = { userName: userInfo.nickName, content: text, avatar: userInfo.avatarUrl, tag_val: tag } as PostListType
-    if (Reflect.ownKeys(uploaderFile).length !== 0) {
+    if (Reflect.ownKeys(uploaderFile).length !== 0 && uploaderFile?.url) {
       article.content_imgs = JSON.stringify([uploaderFile?.url])
     }
 
@@ -83,6 +89,7 @@ export default function Publish() {
       throw error
     } else {
       Taro.showToast({title: '发布成功！', icon: 'none'}).then(() => {
+        reset()
         setTimeout(() => {
           Taro.switchTab({
             url: '/pages/home/index'
