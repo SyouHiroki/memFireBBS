@@ -206,6 +206,16 @@ export default function Detail() {
     }
   }
 
+  const handleImgPreview = (imgUrl: string) => {
+    Taro.previewMedia({
+      sources: [{
+        url: imgUrl,
+        type: 'image',
+      }],
+      current: 0,
+    })
+  }
+
   useDidShow(async () => {
     if (checkAuthorization()) {
       await updateViews()
@@ -229,7 +239,7 @@ export default function Detail() {
         {
           detail?.[0]?.content_imgs &&
           <View>
-            {string2Array(detail?.[0]?.content_imgs).map((item, index) => <Image key={index} src={item} className='detail-pd-img' />)}
+            {string2Array(detail?.[0]?.content_imgs).map((item, index) => <Image key={index} src={item} className='detail-pd-img' onClick={() => handleImgPreview(item)} />)}
           </View>
         }
 

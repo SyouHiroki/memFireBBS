@@ -28,11 +28,11 @@ export default function Login() {
     })
   }
 
-  const test = () => {
-    Taro.navigateToMiniProgram({
-      shortLink:'#小程序://小红书/hmKxu3kewmzc2Db'
-    })
-  }
+  // const test = () => {
+  //   Taro.navigateToMiniProgram({
+  //     shortLink:'#小程序://小红书/hmKxu3kewmzc2Db'
+  //   })
+  // }
 
   return (
     <View className='login'>
@@ -42,7 +42,7 @@ export default function Login() {
         <Text>提示授权</Text>
         <Button className='login-center-btn' onClick={handleAuthorize}>确定授权</Button>
         <Button className='login-center-btn' onClick={cancel}>回到主页</Button>
-        <Button className='login-center-btn' onClick={test}>测试：跳转到小红书</Button>
+        {/* <Button className='login-center-btn' onClick={test}>测试：跳转到小红书</Button> */}
       </View>
     </View>
   )
