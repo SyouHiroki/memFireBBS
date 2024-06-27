@@ -19,7 +19,10 @@ export type PostDetailType = {
   content_imgs?: string
   tag_val: string
   userName: string
-  like?: {like_val: number}[]
+  like?: {
+    like_val: number
+    likers: string
+  }[]
   page_views?: {views: number}[]
   comment?: {
     id: number

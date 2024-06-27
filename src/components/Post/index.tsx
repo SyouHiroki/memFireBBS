@@ -4,6 +4,7 @@ import { formatDate } from "@/lib/time";
 import WatchImg from '@/assets/imgs/watch.png'
 import LikeImg from '@/assets/imgs/like.png'
 import CommentImg from '@/assets/imgs/comment.png'
+import { string2Array } from "@/lib/stringUtils";
 import { PostListType } from "../../../types/post";
 import './index.scss'
 
@@ -23,16 +24,12 @@ export default function Post({ data }: PostPropsType) {
 
         <Text className='com-post-pd-content'>{data?.content.length > 80 ? data?.content.slice(0, 80).trim() + '...' : data?.content}</Text>
 
-        {data.content_imgs && <View>
-          {(() => {
-              const imgs = JSON.parse(data.content_imgs)
-              if (typeof imgs === 'object' && Array.isArray(imgs)) {
-                return imgs.map((item, index) => (
-                  <Image key={index} src={item} className='com-post-pd-img' />
-                ))
-              }
-          })()}
-        </View>}
+        {
+          data?.content_imgs && 
+          <View>
+            {string2Array(data?.content_imgs).map((item, index) => <Image key={index} src={item} className='com-post-pd-img' />)}
+          </View>
+        }
 
         <View className='com-post-pd-dock'>
           <Text className='com-post-pd-dock-time'>{formatDate(data.created_at)}</Text>

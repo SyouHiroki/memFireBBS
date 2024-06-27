@@ -6,7 +6,9 @@ import { supabase } from '@/lib/supabase'
 import CommentImg from '@/assets/imgs/comment.png'
 import HomeImg from '@/assets/imgs/home.png'
 import LikeImg from '@/assets/imgs/like.png'
+import LikeOnImg from '@/assets/imgs/like-on.png'
 import Taro, { useDidShow } from '@tarojs/taro'
+import { string2Array, stringArrayHas } from '@/lib/stringUtils'
 import { PostDetailType } from '../../../types/post'
 import './index.scss'
 
@@ -28,7 +30,7 @@ export default function Detail() {
         avatar,
         content_imgs,
         tag_val,
-        like (like_val),
+        like (like_val, likers),
         page_views (views),
         comment (id, created_at, commentator, responder, comment_content, reply_content, post_id)
       `)
@@ -60,6 +62,61 @@ export default function Detail() {
     if (updateErr) {
       throw updateErr
     }
+  }
+
+  const handleLike = async (post_id: string) => {
+    let { data: selectData, error: selectErr } = await supabase
+    .from('like')
+    .select('like_val, likers')
+    .eq('post_id', post_id)
+
+    if (selectErr) {
+      throw selectErr
+    }
+
+    const newData = { like_val: Number(selectData?.[0].like_val) + 1, likers: JSON.stringify([...string2Array(selectData?.[0].likers), userInfo.nickName]) }
+    const { error: updateErr } = await supabase
+    .from('like')
+    .update(newData)
+    .eq('post_id', post_id)
+    .select()
+
+    if (updateErr) {
+      throw updateErr
+    } 
+
+    getDetail(id as string)
+  }
+
+  const handleCancleLike = async (post_id: string) => {
+    let { data: selectData, error: selectErr } = await supabase
+    .from('like')
+    .select('like_val, likers')
+    .eq('post_id', post_id)
+
+    if (selectErr) {
+      throw selectErr
+    }
+
+    const newData = { like_val: Number(selectData?.[0].like_val) - 1, likers: JSON.stringify([...string2Array(selectData?.[0].likers)].filter(item => item != userInfo.nickName)) }
+    if (newData.like_val < 0) {
+      newData.like_val = 0
+    }
+    if (newData.likers === '[]') {
+      newData.likers = ''
+    }
+
+    const { error: updateErr } = await supabase
+    .from('like')
+    .update(newData)
+    .eq('post_id', post_id)
+    .select()
+
+    if (updateErr) {
+      throw updateErr
+    }
+
+    getDetail(id as string)
   }
 
   const handleGoToHome = () => {
@@ -124,16 +181,12 @@ export default function Detail() {
 
         <Text className='detail-pd-content'>{detail?.[0]?.content}</Text>
 
-        {detail?.[0]?.content_imgs && <View>
-          {(() => {
-              const imgs = JSON.parse(detail?.[0]?.content_imgs)
-              if (typeof imgs === 'object' && Array.isArray(imgs)) {
-                return imgs.map((item, index) => (
-                  <Image key={index} src={item} className='detail-pd-img' />
-                ))
-              }
-          })()}
-        </View>}
+        {
+          detail?.[0]?.content_imgs &&
+          <View>
+            {string2Array(detail?.[0]?.content_imgs).map((item, index) => <Image key={index} src={item} className='detail-pd-img' />)}
+          </View>
+        }
 
         <Text className='detail-pd-meta'>
           <Text className='detail-pd-meta-tag'>#{detail?.[0]?.tag_val}</Text>
@@ -167,8 +220,8 @@ export default function Detail() {
             <Text>评论</Text>
           </View>
 
-          <View className='detail-tabbar-item'>
-            <Image src={LikeImg} className='detail-tabbar-item-icon' />
+          <View className='detail-tabbar-item' onClick={() => stringArrayHas(detail?.[0]?.like?.[0].likers as string, userInfo.nickName) ? handleCancleLike(id as string) : handleLike(id as string)}>
+            <Image src={stringArrayHas(detail?.[0]?.like?.[0].likers as string, userInfo.nickName) ? LikeOnImg : LikeImg} className='detail-tabbar-item-icon' />
             <Text>点赞</Text>
           </View>
         </View>

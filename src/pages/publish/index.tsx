@@ -71,7 +71,7 @@ export default function Publish() {
 
     const article = { userName: userInfo.nickName, content: text, avatar: userInfo.avatarUrl, tag_val: tag } as PostListType
     if (Reflect.ownKeys(uploaderFile).length !== 0) {
-      article.content_imgs = `["${uploaderFile?.url}"]`
+      article.content_imgs = JSON.stringify([uploaderFile?.url])
     }
 
     const { error } = await supabase
