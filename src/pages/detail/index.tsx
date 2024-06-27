@@ -9,6 +9,7 @@ import LikeImg from '@/assets/imgs/like.png'
 import LikeOnImg from '@/assets/imgs/like-on.png'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { string2Array, stringArrayHas } from '@/lib/stringUtils'
+import Loading from '@/components/Loading'
 import { PostDetailType } from '../../../types/post'
 import './index.scss'
 
@@ -212,7 +213,7 @@ export default function Detail() {
     }
   })
 
-  return (
+  return (userInfo && detail) ? (
     <View className='detail'>
       <View className='detail-pd'>
         <View className='detail-pd-user'>
@@ -290,5 +291,9 @@ export default function Detail() {
         </View>}
       </FixedView>
     </View>
+  ) 
+  :
+  (
+    <Loading />
   )
 }

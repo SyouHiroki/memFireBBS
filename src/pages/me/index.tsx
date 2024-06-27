@@ -2,6 +2,7 @@ import { View, Text } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { Image } from "@taroify/core" 
 import { useState } from 'react'
+import Loading from '@/components/Loading'
 import './index.scss'
 
 export default function Me() {
@@ -21,7 +22,7 @@ export default function Me() {
     checkAuthorization()
   })
 
-  return (
+  return userInfo ? (
     <View className='me'>
       <View className='me-user'>
         <Image className='me-user-avatar' src={userInfo.avatarUrl}  />
@@ -33,5 +34,9 @@ export default function Me() {
         <View className='me-dock-item'>设置中心</View>
       </View>
     </View>
+  )
+  :
+  (
+    <Loading />
   )
 }

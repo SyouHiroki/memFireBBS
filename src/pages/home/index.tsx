@@ -86,5 +86,5 @@ export default function Home() {
         </Tabs>
       </ConfigProvider>
     </View>
-  );
+  )
 }

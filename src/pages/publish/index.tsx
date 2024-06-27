@@ -3,8 +3,9 @@ import { Radio, Textarea, Uploader, Button } from "@taroify/core"
 import { useState } from 'react'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { supabase } from '@/lib/supabase'
-import './index.scss'
+import Loading from '@/components/Loading'
 import { PostListType } from '../../../types/post'
+import './index.scss'
 
 export default function Publish() {
   const [userInfo, setUserInfo] = useState(Taro.getStorageSync('userInfo') as any)
@@ -99,7 +100,7 @@ export default function Publish() {
     }
   }
 
-  return (
+  return userInfo ? (
     <View className='publish'>
       <View className='publish-input'>
         <Textarea placeholder='请输入内容' className='publish-input-textarea' value={text} onChange={(e)=> setText(e.detail.value)} />
@@ -121,5 +122,9 @@ export default function Publish() {
         </View>
       </View>
     </View>
+  )
+  :
+  (
+    <Loading />
   )
 }
