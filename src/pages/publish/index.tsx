@@ -89,11 +89,11 @@ export default function Publish() {
       throw error
     } else {
       Taro.showToast({title: '发布成功！', icon: 'none'}).then(() => {
-        reset()
         setTimeout(() => {
           Taro.switchTab({
             url: '/pages/home/index'
           })
+        reset()
         }, 1000)
       })
     }
