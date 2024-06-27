@@ -47,7 +47,8 @@ const usePaginatedQuery = (
       if (filterType === '最新') {
         query = query.order('created_at', { ascending: false })
       } else if (filterType === '热门') {
-        query = query.order('views', { foreignTable: 'page_views', ascending: false })
+        // 获取热门数据时先获取所有数据再进行排序
+        query = query.order('views', { ascending: false, foreignTable: 'page_views' })
       } else if (filterType === '我的') {
         const newUserInfo = Taro.getStorageSync('userInfo')
         if (newUserInfo && newUserInfo.nickName) {
@@ -72,6 +73,15 @@ const usePaginatedQuery = (
         page_views: post.page_views || [],
         comment: post.comment || []
       })) ?? []
+
+      if (filterType === '热门') {
+        // 在前端对 '热门' 数据进行排序
+        formattedData.sort((a, b) => {
+          const viewsA = a.page_views?.reduce((sum, view) => sum + view.views, 0) || 0
+          const viewsB = b.page_views?.reduce((sum, view) => sum + view.views, 0) || 0
+          return viewsB - viewsA
+        })
+      }
 
       if (isRefresh) {
         setData(formattedData)
@@ -125,5 +135,4 @@ const usePaginatedQuery = (
 }
 
 export default usePaginatedQuery
-
 
