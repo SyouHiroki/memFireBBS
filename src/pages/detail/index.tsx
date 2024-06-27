@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import { Image, FixedView, Textarea, Button } from '@taroify/core'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { formatDate } from '@/lib/time'
 import { supabase } from '@/lib/supabase'
 import CommentImg from '@/assets/imgs/comment.png'
@@ -41,6 +41,27 @@ export default function Detail() {
       setDetail(data)
   }
 
+  const updateViews = async (post_id: string) => {
+    let { data: selectData, error: selectErr } = await supabase
+    .from('page_views')
+    .select('views')
+    .eq('post_id', post_id)
+
+    if (selectErr) {
+      throw selectErr
+    }
+
+    const { error: updateErr } = await supabase
+    .from('page_views')
+    .update({ views: Number(selectData?.[0].views) + 1 })
+    .eq('post_id', post_id)
+    .select()
+
+    if (updateErr) {
+      throw updateErr
+    }
+  }
+
   const handleGoToHome = () => {
     Taro.navigateBack()
   }
@@ -70,10 +91,6 @@ export default function Detail() {
     }
   }
 
-  useEffect(()=> {
-    getDetail(id as string)
-  }, [id])
-
   const checkAuthorization = () => {
     const newUserInfo = Taro.getStorageSync('userInfo')
     setUserInfo(newUserInfo)
@@ -81,11 +98,17 @@ export default function Detail() {
       Taro.navigateTo({
         url: '/pages/login/index'
       })
+      return false
+    } else {
+      return true
     }
   }
 
-  useDidShow(() => {
-    checkAuthorization()
+  useDidShow(async () => {
+    if (checkAuthorization()) {
+      await updateViews(id as string)
+      getDetail(id as string)
+    }
   })
 
   return (

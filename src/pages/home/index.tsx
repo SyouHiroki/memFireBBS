@@ -3,7 +3,7 @@ import { View } from "@tarojs/components"
 import { Tabs, ConfigProvider, List, PullRefresh } from "@taroify/core"
 import usePaginatedQuery from "@/hooks/usePagination"
 import Post from "@/components/Post"
-import Taro from "@tarojs/taro"
+import Taro, { useDidShow } from "@tarojs/taro"
 import "./index.scss"
 
 export default function Home() {
@@ -41,6 +41,10 @@ export default function Home() {
       url: `/pages/detail/index?id=${id}`
     })
   }
+
+  useDidShow(() => {
+    refresh()
+  })
 
   return (
     <View className='home'>
